@@ -8,12 +8,8 @@
 }
 
 .main {
-  padding: 5rem 0;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  width:100vw,
+  
 }
 
 .footer {
@@ -120,3 +116,52 @@
     flex-direction: column;
   }
 }
+
+.hoverEffect {
+  border:1px solid white
+}
+
+.hoverEffect:hover {
+   border: 5px solid #8C00A1;
+   transition-duration: 0.5s;
+}
+
+.timeLineContent {
+  /* overflow: hidden; */
+  display: inline-block;
+  color: #fff;
+  width: 400px;
+  position: relative;
+  padding-bottom: 30px;
+}
+
+.timeLineItem {
+  float: left;
+  width: 40%;
+  text-align: right;
+  padding-right: 5px;
+  margin-right: 20px;
+}
+
+.timeLineDesc {
+  text-align: left;
+  padding-left: 5px;
+  overflow: hidden;
+}
+
+.timeLineContent h2 {
+  color: #fff;
+}
+
+.timeLineContent:before {
+  margin-left: 10px;
+  content: '';
+  display: block;
+  width: 1px;
+  background: #fff;
+  height: 100%;
+  position: absolute;
+  left: 40%;
+  top: 0;
+}
+
