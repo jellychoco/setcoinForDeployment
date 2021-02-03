@@ -436,10 +436,9 @@ export default function Home() {
             textAlign: "center",
           }}
         >
-          <Particles
+          {/* <Particles
             style={{
-              position: "absolute",
-              zIndex: 0.5,
+              position: "static",
             }}
             params={{
               particles: {
@@ -452,7 +451,7 @@ export default function Home() {
                 },
               },
             }}
-          />
+          /> */}
           <div
             style={{
               color: "#55595c",
