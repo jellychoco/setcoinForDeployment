@@ -1,21 +1,37 @@
 import Head from "next/head"
 import styles from "../styles/Home.module.css"
 import Particles from "react-particles-js"
-import { Parallax, Background } from "react-parallax"
+
 import { useMediaQuery } from "react-responsive"
 import VideoBg from "reactjs-videobg"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import Collapsible from "react-collapsible"
+import Sidebar from "react-sidebar"
+
+import Carousel from "react-elastic-carousel"
 
 export default function Home() {
   const isDesktopOrLaptop = useMediaQuery({
     query: "(min-device-width: 1224px)",
   })
+  console.log(isDesktopOrLaptop)
+
+  const [isDesktopSize, setIsDesktopSize] = useState(true)
+
+  useEffect(() => {
+    if (isDesktopOrLaptop) {
+      setIsDesktopSize(true)
+    } else {
+      setIsDesktopSize(false)
+    }
+  }, [isDesktopOrLaptop])
   const [scrollPosition, setScrollPosition] = useState(0)
   const handleScroll = () => {
     const position = window.pageYOffset
     setScrollPosition(position)
   }
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const paralRef = useRef()
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll, { passive: true })
@@ -60,21 +76,28 @@ export default function Home() {
       name: "WINGS CPA",
     },
   ]
+  const handleSidebar = (open) => {
+    setSidebarOpen(open)
+  }
 
   const generateor = (array) => {
-    if (!array) return []
-    if (!array.length) return []
+    if (!array || !array.length) return []
 
     return array.map((value) => {
       return (
         <div
           className={styles.hoverEffect}
           key={value.src}
-          style={{
+          style={isDesktopSize?{
             margin: "5px",
             backgroundColor: "black",
             display: "inline-block",
             zIndex: 2,
+          }:{
+            width:"45%",
+            margin:"5px",
+            textAlign:"center",
+            backgroundColor: "black",
           }}
         >
           <img width='100%' src={value.src} />
@@ -83,7 +106,11 @@ export default function Home() {
       )
     })
   }
-
+  const breakPoints = [
+    { width: 1, itemsToShow: 1 },
+    { width: 768, itemsToShow: 4 },
+    { width: 1200, itemsToShow: 4 },
+  ]
   return (
     <div>
       <Head>
@@ -97,43 +124,134 @@ export default function Home() {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       {/* 헤더시작 */}
+
       <div
-        style={{
-          zIndex: 2,
-          position: "fixed",
-          height: "12%",
-          width: "100%",
-          alignItems: "center",
-          justifyContent: "space-around",
-          display: "flex",
-          backgroundColor: scrollPosition === 0 ? "" : "#232A37",
-          transitionDuration: "0.2s",
-          padding: 0,
-          margin: 0,
-        }}
+        style={
+          isDesktopSize
+            ? {
+                zIndex: 2,
+                position: "fixed",
+                height: "12%",
+                width: "100%",
+                alignItems: "center",
+                justifyContent: "space-around",
+                display: "flex",
+                backgroundColor: scrollPosition === 0 ? "" : "#232A37",
+                transitionDuration: "0.2s",
+                padding: 0,
+                margin: 0,
+              }
+            : {}
+        }
       >
-        <img src={"logo.png"} alt='logo' />
-        <ul
-          style={{
-            color: "white",
-            listStyle: "none",
-            display: "flex",
-            justifyContent: "space-around",
-            width: "40%",
-          }}
-        >
-          <li>HOME</li>
-          <li>WHITE PAPER</li>
-          <li>ROADMAP</li>
-          <li>TEAM</li>
-          <li>ABOUT SET</li>
-          <li>DOWNLOAD</li>
-          <li>REGULATION</li>
-        </ul>
+        {isDesktopSize ? (
+          <>
+            <img src={"logo.png"} alt='logo' />
+            <ul
+              style={{
+                color: "white",
+                listStyle: "none",
+                display: "flex",
+                justifyContent: "space-around",
+                width: "40%",
+              }}
+            >
+              <li>HOME</li>
+              <li>WHITE PAPER</li>
+              <li>ROADMAP</li>
+              <li>TEAM</li>
+              <li>ABOUT SET</li>
+              <li>DOWNLOAD</li>
+              <li>REGULATION</li>
+            </ul>
+          </>
+        ) : (
+          <>
+            <img
+              width='50px'
+              style={{ position: "fixed", zIndex: 2 }}
+              src={"logo.png"}
+              alt='logo'
+            />
+            <Sidebar
+              pullRight={true}
+              sidebar={
+                <>
+                  <div
+                    onClick={() => {
+                      handleSidebar(false)
+                    }}
+                    style={{
+                      textAlign: "right",
+                      padding: "10px",
+                      marginBottom: "10px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <img
+                      style={{ maxWidth: "25px" }}
+                      src={"close.svg"}
+                      alt='close'
+                    />
+                  </div>
+                  <ul
+                    style={{
+                      listStyle: "none",
+                      float: "right",
+                      padding: "15px 10px 15px 10px",
+                    }}
+                  >
+                    <li>HOME</li>
+                    <li>WHITE PAPER</li>
+                    <li>ROADMAP</li>
+                    <li>TEAM</li>
+                    <li>ABOUT SET</li>
+                    <li>DOWNLOAD</li>
+                    <li>REGULATION</li>
+                  </ul>
+                </>
+              }
+              open={sidebarOpen}
+              onSetOpen={handleSidebar}
+              styles={{
+                sidebar: {
+                  zIndex: 3,
+                  background: "white",
+                  opacity: "0.9",
+                  position: "fixed",
+                  right: 0,
+                  top: 0,
+                },
+              }}
+            >
+              {" "}
+              <div
+                onClick={() => {
+                  handleSidebar(true)
+                }}
+                style={{
+                  padding: "10px",
+                  position: "fixed",
+                  right: 0,
+                  top: 0,
+                  zIndex: 3,
+                }}
+              >
+                <img
+                  style={{
+                    filter: "invert(100%) brightness(100%) contrast(100%)",
+                  }}
+                  src={"menu.svg"}
+                />
+              </div>
+            </Sidebar>
+          </>
+        )}
       </div>
       {/* 헤더끝 */}
       {/* 메인시작 */}
       {/* 첫번째페이지 */}
+
       <div
         style={{
           height: "100vh",
@@ -142,9 +260,24 @@ export default function Home() {
           alignItems: "center",
         }}
       >
-        <VideoBg poster={"image1.jpg"}>
-          <VideoBg.Source src={"video.webm"} type='video/webm' />
-        </VideoBg>
+        <video
+          style={{
+            position: "absolute",
+            zIndex: -1,
+            right: 0,
+            bottom: 0,
+            minHeight: "100%",
+            minWidth: "100%",
+          }}
+          poster='URL_TO_IMAGE'
+          id='video-bg-elem'
+          preload='auto'
+          autoplay='true'
+          loop='loop'
+          muted='muted'
+        >
+          <source src='video.webm' type='video/webm' />
+        </video>
         <div
           style={{
             height: "40vh",
@@ -153,44 +286,94 @@ export default function Home() {
             color: "white",
           }}
         >
-          <p style={{ fontSize: "3rem", margin: 0 }}>WELCOME TO</p>
-          <p style={{ fontSize: "5rem", margin: 0 }}>Second Earth</p>
-          <p>
-            future of tourism has arrived. Join our travelers community and be
-            one of the pioneers of Virtual Reality Travel!
-          </p>
-          <div style={{ display: "flex", margin: 0 }}>
-            <div
-              style={{
-                borderRadius: "10px 0px 0px 10px ",
-                fontSize: "1.25rem",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "#8C00A1",
-                width: "25%",
-                textAlign: "center",
-                height: "60px",
-              }}
-            >
-              GET SET
-            </div>
-            <div
-              style={{
-                borderRadius: "0px 10px 10px 0px ",
-                fontSize: "1.25rem",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "#232A35",
-                width: "25%",
-                textAlign: "center",
-                height: "60px",
-              }}
-            >
-              YOUTUBE CHANNEL
-            </div>
-          </div>
+          {/* 웹 */}
+          {isDesktopSize && (
+            <>
+              <p style={{ fontSize: "3rem", margin: 0 }}>WELCOME TO</p>
+              <p style={{ fontSize: "5rem", margin: 0 }}>Second Earth</p>
+              <p>
+                future of tourism has arrived. Join our travelers community and
+                be one of the pioneers of Virtual Reality Travel!
+              </p>
+              <div style={{ display: "flex", margin: 0 }}>
+                <div
+                  style={{
+                    borderRadius: "10px 0px 0px 10px ",
+                    fontSize: "1.25rem",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: "#8C00A1",
+                    width: "25%",
+                    textAlign: "center",
+                    height: "60px",
+                  }}
+                >
+                  GET SET
+                </div>
+                <div
+                  style={{
+                    borderRadius: "0px 10px 10px 0px ",
+                    fontSize: "1.25rem",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: "#232A35",
+                    width: "25%",
+                    textAlign: "center",
+                    height: "60px",
+                  }}
+                >
+                  YOUTUBE CHANNEL
+                </div>
+              </div>{" "}
+            </>
+          )}
+          {/* 웹 */}
+          {/* 모바일 */}
+          {!isDesktopSize && (
+            <>
+              <p style={{ fontSize: "1.5rem", margin: 0 }}>WELCOME TO</p>
+              <p style={{ fontSize: "2.5rem", margin: 0 }}>Second Earth</p>
+              <p style={{ fontSize: "0.775rem" }}>
+                future of tourism has arrived. Join our travelers community and
+                be one of the pioneers of Virtual Reality Travel!
+              </p>
+              <div style={{ display: "flex", margin: 0 }}>
+                <div
+                  style={{
+                    borderRadius: "10px 0px 0px 10px ",
+                    fontSize: "0.875rem",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: "#8C00A1",
+                    width: "50%",
+                    textAlign: "center",
+                    height: "60px",
+                  }}
+                >
+                  GET SET
+                </div>
+                <div
+                  style={{
+                    borderRadius: "0px 10px 10px 0px ",
+                    fontSize: "0.875rem",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: "#232A35",
+                    width: "50%",
+                    textAlign: "center",
+                    height: "60px",
+                  }}
+                >
+                  YOUTUBE CHANNEL
+                </div>
+              </div>{" "}
+            </>
+          )}
+          {/* 모바일 */}
         </div>
       </div>
       {/* 첫번째페이지 끝 */}
@@ -218,85 +401,218 @@ export default function Home() {
           width: "100%",
         }}
       >
-        <div style={{ backgroundColor: "#232A37", height: "20%" }}>
-          <div style={{ textAlign: "center", paddingTop: "40px" }}>
-            <p style={{ fontSize: "1.75rem" }}>
-              SETCOIN PIONEERS THE VR TRAVEL REVOLUTION
-            </p>
-            <p>
-              The Second Earth Gaia Project is opening up a new world of endless
-              excitement and exploration. In times of uncertainty and turmoil,
-              safely travel all over the world without ever leaving your home.
-              Join our global community and be one of the pioneers of virtual
-              reality travel. Fulfil your mission and earn your reward.
-              Virtually everything is possible!
-            </p>
-          </div>
-          <div style={{ textAlign: "center" }}>
-            <div>
-              <div
-                style={{
-                  backgroundColor: "#8C02A0",
-                  display: "inline-block",
-                  padding: "15px",
-                  borderRadius: "5px",
-                  width: "200px",
-                  margin: "10px",
-                }}
-              >
-                WHITE PAPER
+        {/* 웹 */}
+        {isDesktopSize && (
+          <>
+            <div style={{ backgroundColor: "#232A37", height: "20%" }}>
+              <div style={{ textAlign: "center", paddingTop: "40px" }}>
+                <p style={{ fontSize: "1.75rem" }}>
+                  SETCOIN PIONEERS THE VR TRAVEL REVOLUTION
+                </p>
+                <p>
+                  The Second Earth Gaia Project is opening up a new world of
+                  endless excitement and exploration. In times of uncertainty
+                  and turmoil, safely travel all over the world without ever
+                  leaving your home. Join our global community and be one of the
+                  pioneers of virtual reality travel. Fulfil your mission and
+                  earn your reward. Virtually everything is possible!
+                </p>
               </div>
-              <div
-                style={{
-                  backgroundColor: "#8C02A0",
-                  display: "inline-block",
-                  padding: "15px",
-                  borderRadius: "5px",
-                  width: "200px",
-                  margin: "10px",
-                }}
-              >
-                SET BUSINESS PLAN I
+              <div style={{ textAlign: "center" }}>
+                <div style={{ flexGrow: 1 }}>
+                  <div
+                    style={{
+                      position: "sticky",
+                      zIndex: 1,
+                      backgroundColor: "#8C02A0",
+                      display: "inline-block",
+                      padding: "15px",
+                      borderRadius: "5px",
+                      width: "200px",
+                      margin: "10px",
+                    }}
+                  >
+                    WHITE PAPER
+                  </div>
+                  <div
+                    style={{
+                      position: "sticky",
+                      zIndex: 1,
+                      backgroundColor: "#8C02A0",
+                      display: "inline-block",
+                      padding: "15px",
+                      borderRadius: "5px",
+                      width: "200px",
+                      margin: "10px",
+                    }}
+                  >
+                    SET BUSINESS PLAN I
+                  </div>
+                </div>
+                <div style={{ flexGrow: 1 }}>
+                  <div
+                    style={{
+                      position: "sticky",
+                      zIndex: 1,
+                      backgroundColor: "#8C02A0",
+                      display: "inline-block",
+                      padding: "15px",
+                      borderRadius: "5px",
+                      width: "200px",
+                      margin: "10px",
+                    }}
+                  >
+                    OTHER DOCUMENT
+                  </div>
+                  <div
+                    style={{
+                      position: "sticky",
+                      zIndex: 1,
+                      backgroundColor: "#8C02A0",
+                      display: "inline-block",
+                      padding: "15px",
+                      borderRadius: "5px",
+                      width: "200px",
+                      margin: "10px",
+                    }}
+                  >
+                    SET BUSINESS PLAN II
+                  </div>
+                </div>
+              </div>
+            </div>{" "}
+            <div
+              style={{
+                height: "5%",
+                backgroundImage:
+                  "linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ),url(image2.jpg)",
+                backgroundRepeat: "no-repeat",
+                backgroundAttachment: "fixed",
+                backgroundSize: "cover",
+              }}
+            ></div>
+          </>
+        )}
+        {/* 웹 */}
+        {/* 모바일 */}
+        {!isDesktopSize && (
+          <>
+            <div style={{ backgroundColor: "#232A37", height: "60%" }}>
+              <div style={{ textAlign: "center", paddingTop: "40px" }}>
+                <p style={{ fontSize: "1.5rem" }}>
+                  SETCOIN PIONEERS THE VR TRAVEL REVOLUTION
+                </p>
+                <p>
+                  The Second Earth Gaia Project is opening up a new world of
+                  endless excitement and exploration. In times of uncertainty
+                  and turmoil, safely travel all over the world without ever
+                  leaving your home. Join our global community and be one of the
+                  pioneers of virtual reality travel. Fulfil your mission and
+                  earn your reward. Virtually everything is possible!
+                </p>
+              </div>
+              <div style={{ textAlign: "center" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <div
+                    style={{
+                      position: "sticky",
+                      zIndex: 1,
+                      backgroundColor: "#8C02A0",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      padding: "15px",
+                      borderRadius: "5px",
+                      width: "125px",
+                      height: "100px",
+                      margin: "10px",
+                    }}
+                  >
+                    WHITE PAPER
+                  </div>
+                  <div
+                    style={{
+                      position: "sticky",
+                      zIndex: 1,
+                      backgroundColor: "#8C02A0",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      padding: "15px",
+                      borderRadius: "5px",
+                      width: "125px",
+                      height: "100px",
+                      margin: "10px",
+                    }}
+                  >
+                    SET BUSINESS PLAN I
+                  </div>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <div
+                    style={{
+                      position: "sticky",
+                      zIndex: 1,
+                      backgroundColor: "#8C02A0",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      padding: "15px",
+                      borderRadius: "5px",
+                      width: "125px",
+                      height: "100px",
+                      margin: "10px",
+                    }}
+                  >
+                    OTHER DOCUMENT
+                  </div>
+                  <div
+                    style={{
+                      position: "sticky",
+                      zIndex: 1,
+                      backgroundColor: "#8C02A0",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      padding: "15px",
+                      borderRadius: "5px",
+                      width: "125px",
+                      height: "100px",
+                      margin: "10px",
+                    }}
+                  >
+                    SET BUSINESS PLAN II
+                  </div>
+                </div>
               </div>
             </div>
-            <div>
-              <div
-                style={{
-                  backgroundColor: "#8C02A0",
-                  display: "inline-block",
-                  padding: "15px",
-                  borderRadius: "5px",
-                  width: "200px",
-                  margin: "10px",
-                }}
-              >
-                OTHER DOCUMENT
-              </div>
-              <div
-                style={{
-                  backgroundColor: "#8C02A0",
-                  display: "inline-block",
-                  padding: "15px",
-                  borderRadius: "5px",
-                  width: "200px",
-                  margin: "10px",
-                }}
-              >
-                SET BUSINESS PLAN II
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          style={{
-            height: "30%",
-            backgroundImage:
-              "linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ),url(image2.jpg)",
-            backgroundRepeat: "no-repeat",
-            backgroundAttachment: "fixed",
-            backgroundSize: "cover",
-          }}
-        ></div>
+            <div
+              style={{
+                height: "50%",
+                backgroundImage:
+                  "linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ),url(image2.jpg)",
+                backgroundRepeat: "no-repeat",
+                backgroundAttachment: "fixed",
+                backgroundSize: "cover",
+                position:"relative",
+                backgroundPositionX:"70%"
+              }}
+            ></div>
+          </>
+        )}
+        {/* 모바일 */}
         {/* 세번째페이지 시작 */}
         <section
           style={{
@@ -304,15 +620,16 @@ export default function Home() {
               "linear-gradient(180deg, #272057 0%, #232A35 100%)",
           }}
         >
-          <div style={{ padding: "2%" }}>
+          <div style={{ padding:isDesktopSize? "2%":"5%" }}>
             <div style={{ textAlign: "center" }}>
-              <p style={{ fontSize: "2rem" }}>VISION</p>
+              <p style={{ fontSize:isDesktopSize? "2rem":"1.5rem" }}>VISION</p>
               <p>
                 Travel and explore without boundaries. Virtually everything is
                 possible!
               </p>
             </div>
-            <div style={{ display: "flex", width: "100%" }}>
+            <div style={isDesktopSize?{ display: "flex", width: "100%" }:{display:"flex",flexDirection:"column"}}>
+              { isDesktopSize && <>
               <div style={{ width: "50%", padding: "5%" }}>
                 <p style={{ fontSize: "2rem" }}>NOAH EXPLORER</p>
                 <p>
@@ -422,13 +739,127 @@ export default function Home() {
                     </p>
                   </Collapsible>
                 </div>
+              </div></>}
+              {/* 웹끝 */}
+              {/* 모바일 */}
+              { !isDesktopSize && <>
+              <div style={{ width: "100%", padding: "5%" }}>
+                <p style={{ fontSize: "1.5rem" }}>NOAH EXPLORER</p>
+                <p>
+                  Within the Second Earth Gaia Project, Explorers lead Pioneers
+                  to explore the territory of our virtual second earth and
+                  provide content to new users to obtain long-term benefits from
+                  fulfilling tasks and watching advertisement (calculated by
+                  CPVS – cost per view of the second earth).
+                </p>
+                <div
+                  style={{
+                    cursor: "pointer",
+                  }}
+                >
+                  <Collapsible
+                    triggerStyle={{
+                      padding: "10px",
+                      border: "1px solid white",
+                      width: "100%",
+                      display: "block",
+                    }}
+                    trigger='+ Noah Explorer recruitment rules'
+                    triggerWhenOpen='- Noah Explorer recruitment rules'
+                  >
+                    <p
+                      style={{
+                        borderWidth: "0px 1px 1px 1px",
+                        padding: "15px",
+                        margin: 0,
+                        borderColor: "white",
+                        borderStyle: "solid",
+                      }}
+                    >
+                      Deposit: 5000USDT <br />
+                      <br />
+                      In the early stage (“Noah’s Landing” stage), the Noah
+                      Explorer assists and guides Pioneers to help publicize the
+                      project and obtain contribution value, and then purchase
+                      the corresponding amount of SET tokens in the following
+                      “Reshaping” stage. In the mid-term, SET tokens can be
+                      mined through the POM mission mining system and later
+                      through the introduction of the ecosystem-wide mission
+                      mining mechanism. Within the mission system, the Explorer
+                      can supplement or improve AR/VR content in his respective
+                      area to encourage the involvement of users. Within the
+                      advertising system, the interactive advertising
+                      customization system can allow advertisers to utilize
+                      interaction through virtual reality to communicate with
+                      the audience. With the assistance of artificial
+                      intelligence, their buying behavior will be incentivized
+                      and product customization as well as product
+                      personalization will be optimized to the greatest extent.
+                      In summary, advertising will become more accurate through
+                      user screening and analysis, while at the same time
+                      blockchain technology will ensure transparency and prevent
+                      fraud. The greatest beneficiary of all the above is the
+                      Explorer.
+                    </p>
+                  </Collapsible>
+                </div>
               </div>
+
+              <div style={{ width: "100%", padding: "5%" }}>
+                <p style={{ fontSize: "2rem" }}>PIONEERS</p>
+                <p>
+                  Under the oversight of Explorers, Pioneers can use their
+                  mobile phones and other electronic equipment to gather data
+                  (initially mainly photos, videos) for the second world
+                  ecosystem and obtain revenue from sharing this data.
+                </p>
+                <div
+                  style={{
+                    cursor: "pointer",
+                  }}
+                >
+                  <Collapsible
+                    triggerStyle={{
+                      padding: "10px",
+                      border: "1px solid white",
+                      width: "100%",
+                      display: "block",
+                    }}
+                    trigger='+ Pioneers recruitement rules'
+                    triggerWhenOpen='- Pioneers recruitement rules'
+                  >
+                    <p
+                      style={{
+                        borderWidth: "0px 1px 1px 1px",
+                        padding: "15px",
+                        margin: 0,
+                        borderColor: "white",
+                        borderStyle: "solid",
+                      }}
+                    >
+                      Any user who has a mobile device or other suitable devices
+                      for data gathering can become a Pioneer. About Pioneer
+                      data gathering: Pioneers shall shoot photos and videos in
+                      certain areas and upload photos to the Gaia ecosystem.
+                      This data will provide the most important building block
+                      for the construction of the Gaia virtual world. Pioneers
+                      will receive “missions” from their respective Explorers
+                      and will obtain revenue according to their contribution in
+                      fulfilling these missions. By collecting data and
+                      fulfilling missions, Pioneers may build their own networks
+                      up to a point where they become Explorers themselves. The
+                      student may well become the master!
+                    </p>
+                  </Collapsible>
+                </div>
+              </div></>}
             </div>
           </div>
         </section>
         {/* 세번째페이지 끝 */}
         {/* 네번째페이지 시작 */}
-        <section
+        {/* 웹시작 */}
+        {isDesktopSize && <section
           style={{
             height: "30%",
             backgroundColor: "transparent",
@@ -436,7 +867,7 @@ export default function Home() {
             textAlign: "center",
           }}
         >
-          {/* <Particles
+          <Particles
             style={{
               position: "static",
             }}
@@ -451,7 +882,7 @@ export default function Home() {
                 },
               },
             }}
-          /> */}
+          />
           <div
             style={{
               color: "#55595c",
@@ -467,6 +898,8 @@ export default function Home() {
             <p>Noah's Landing Launches on Sep 03 2020</p>
             <div
               style={{
+                position:"sticky",
+                zIndex:2,
                 cursor: "pointer",
                 border: "2px solid #55595c",
                 display: "inline-block",
@@ -476,7 +909,62 @@ export default function Home() {
               click Here
             </div>
           </div>
-        </section>
+        </section>}
+        {/* 웹끝 */}
+        {/* 모바일시작 */}
+        {!isDesktopSize && <section
+          style={{
+            height: "50%",
+            backgroundColor: "transparent",
+            backgroundImage: "linear-gradient(180deg,#8C00A1 0%, #232A35 100%)",
+            textAlign: "center",
+            display:"flex",
+            justifyContent:"center",
+            alignItems:"center"
+          }}
+        >
+         
+          <div
+            style={{
+              color: "#55595c",
+              backgroundColor: "white",
+              display: "inline-block",
+              width: "90%",
+              padding: "35px",
+            }}
+          >
+             {/* <Particles
+            params={{
+              particles: {
+                number: {
+                  type:"inside",
+                  value: 100,
+                  density: {
+                    enable: true,
+                    value_area: 1500,
+                  },
+                },
+              },
+            }}
+          /> */}
+            <img width='100%' src={"image4.jpg"} />
+            <p style={{ fontWeight: 600, fontSize: "1.5em" }}>SET</p>
+            <p>Noah's Landing Launches on Sep 03 2020</p>
+            <div
+              style={{
+                position:"sticky",
+                zIndex:2,
+                cursor: "pointer",
+                border: "2px solid #55595c",
+                display: "inline-block",
+                padding: "12px 24px 12px 24px",
+              }}
+            >
+              click Here
+            </div>
+          </div>
+        </section>}
+        {/* 모바일끝 */}
         {/* 네번쨰페이지 끝 */}
         {/* 5번쨰페이지 */}
         <section
@@ -489,9 +977,26 @@ export default function Home() {
             justifyContent: "center",
           }}
         >
-          <div style={{ display: "inline-block", width: "45%" }}>
-            <div style={{ padding: "50px", textAlign: "center" }}>
-              <p style={{ margin: 0, fontSize: "1.5rem" }}>
+            <Particles
+            style={{position:"absolute",maxWidth:"100px"}}
+            params={{
+              particles: {
+                number: {
+                  type:"inside",
+                  value: 500,
+                  density: {
+                    enable: true,
+                    value_area: 3000,
+                  },
+                },
+              },
+            }}
+          />
+          <div style={isDesktopSize ?{ display: "inline-block", width:"45%"}:{
+            width:"100%",padding:"2%"
+          }}>
+            <div style={isDesktopSize?{ padding: "50px", textAlign: "center" }:{padding:"5px",textAlign:"centerm"}}>
+              <p style={{ margin: 0, fontSize: "1.7rem" }}>
                 About Second Earth token (SET)
               </p>
               <p>
@@ -501,10 +1006,10 @@ export default function Home() {
               </p>
             </div>
 
-            <div style={{}}>
+            <div style={{
+                  zIndex:3}}>
               <Collapsible
                 triggerStyle={{
-                  cursor: "pointer",
                   cursor: "pointer",
                   padding: "10px",
                   border: "1px solid white",
@@ -797,8 +1302,8 @@ export default function Home() {
                   Gaia will be at the forefront of this development.
                 </p>
               </Collapsible>
-              <div style={{ padding: "50px", textAlign: "center" }}>
-                <p style={{ margin: 0, fontSize: "1.5rem" }}>
+              <div style={isDesktopSize? { padding:"50px", textAlign: "center" }:{padding:"10px",marginTop:"40px",textAlign:"center"}}>
+                <p style={{ margin: 0, fontSize: isDesktopSize?"1.5rem":"1.25rem" }}>
                   PROOF-OF-MISSION (POM)
                 </p>
                 <p>
@@ -815,10 +1320,13 @@ export default function Home() {
             </div>
           </div>
 
-          <div style={{ padding: "50px", textAlign: "center" }}>
             <p style={{ margin: 0, fontSize: "1.5rem", padding: "5%" }}>
               OFFICIAL PARTNERS
             </p>
+          <div style={isDesktopSize?{ padding: "50px", textAlign: "center" }:{
+            padding:"10px",display:"flex",
+            width:"100%",flexWrap:"wrap"
+          }}>
             {generateor(list)}
             {generateor(list)}
             {generateor(list)}
@@ -930,6 +1438,7 @@ export default function Home() {
             backgroundRepeat: "no-repeat",
             backgroundAttachment: "fixed",
             backgroundSize: "cover",
+            backgroundPositionX:"50%"
           }}
         >
           <div
@@ -941,7 +1450,7 @@ export default function Home() {
               alignItems: "center",
             }}
           >
-            <h1 style={{ margin: 0, fontSize: "1.75rem" }}>
+            <h1 style={{ margin: 0, fontSize:isDesktopSize? "1.75rem":'1.5rem' }}>
               SETCOIN PIONEERS THE VR TRAVEL REVOLUTION
             </h1>
           </div>
@@ -954,6 +1463,7 @@ export default function Home() {
             particles: {
               number: {
                 value: 100,
+                type: "inside",
                 density: {
                   enable: true,
                   value_area: 3000,
@@ -977,142 +1487,195 @@ export default function Home() {
           <h1 style={{ padding: "5%" }}>TEAM</h1>
           <div
             style={{
-              width: "50%",
+              width: isDesktopSize?"50%":"100%",
               textAlign: "center",
               display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            <div style={{ padding: "5px", flexGrow: 1 }}>
-              <img
-                style={{
-                  width: "200px",
-                  height: "200px",
-                  backgroundSize: "cover",
-                }}
-                src={"/ppl1.png"}
-                alt=''
-              />
-              <h3>Scott Bingly</h3>
-              <h4>HEad of Global Operations</h4>
-              <p style={{ textAlign: "left" }}>
-                Scott is a results-driven Head of Global Operations with over 10
-                years’ experience leading and increasing growth in small and
-                medium international businesses mainly in the Asia-Pacific
-                Region. Being a NUS MBA recipient and experienced manager, he
-                oversaw unparalleled increase in company revenue (250% over 3
-                years) during his time as a General Manager. Currently Scott is
-                seeking to build and grow together with Second Earth a major VR-
-                and blockchain-based entertainment ecosystem to rival today’s
-                major internet companies.
-              </p>
-            </div>
-            <div style={{ padding: "5px", flexGrow: 1 }}>
-              <img
-                style={{
-                  width: "200px",
-                  height: "200px",
-                  backgroundSize: "cover",
-                }}
-                src={"/ppl2.png"}
-                alt=''
-              />
-              <h3>Scott Bingly</h3>
-              <h4>Head of Marketing</h4>
-              <p style={{ textAlign: "left" }}>
-                Scott is a results-driven Head of Global Operations with over 10
-                years’ experience leading and increasing growth in small and
-                medium international businesses mainly in the Asia-Pacific
-                Region. Being a NUS MBA recipient and experienced manager, he
-                oversaw unparalleled increase in company revenue (250% over 3
-                years) during his time as a General Manager. Currently Scott is
-                seeking to build and grow together with Second Earth a major VR-
-                and blockchain-based entertainment ecosystem to rival today’s
-                major internet companies.
-              </p>
-            </div>
-            <div style={{ padding: "5px", flexGrow: 1 }}>
-              <img
-                style={{
-                  width: "200px",
-                  height: "200px",
-                  backgroundSize: "cover",
-                }}
-                src={"/ppl3.png"}
-                alt=''
-              />
-              <h3>Scott Bingly</h3>
-              <h4>Creative Director </h4>
-              <p style={{ textAlign: "left" }}>
-                Scott is a results-driven Head of Global Operations with over 10
-                years’ experience leading and increasing growth in small and
-                medium international businesses mainly in the Asia-Pacific
-                Region. Being a NUS MBA recipient and experienced manager, he
-                oversaw unparalleled increase in company revenue (250% over 3
-                years) during his time as a General Manager. Currently Scott is
-                seeking to build and grow together with Second Earth a major VR-
-                and blockchain-based entertainment ecosystem to rival today’s
-                major internet companies.
-              </p>
-            </div>
-            <div style={{ padding: "5px", flexGrow: 1 }}>
-              <img
-                style={{
-                  width: "200px",
-                  height: "200px",
-                  backgroundSize: "cover",
-                }}
-                src={"/ppl4.png"}
-                alt=''
-              />
-              <h3>Scott Bingly</h3>
-              <h4>Technical Project Lead </h4>
-              <p style={{ textAlign: "left" }}>
-                Scott is a results-driven Head of Global Operations with over 10
-                years’ experience leading and increasing growth in small and
-                medium international businesses mainly in the Asia-Pacific
-                Region. Being a NUS MBA recipient and experienced manager, he
-                oversaw unparalleled increase in company revenue (250% over 3
-                years) during his time as a General Manager. Currently Scott is
-                seeking to build and grow together with Second Earth a major VR-
-                and blockchain-based entertainment ecosystem to rival today’s
-                major internet companies.
-              </p>
-            </div>
-          </div>
-          <div style={{ paddingTop: "10%", width: "45%" }}>
-            <h1 style={{ textAlign: "center", fontSize: "1.75rem" }}>
-              We are the citizen of thje Second Earth
-            </h1>
-            <p style={{ paddingBottom: "150px" }}>
-              We are the most powerful innovative virtual reality community in
-              the world, free and open to everyone. We firmly believe that
-              people want to shape and explore their own world. Therefore, we
-              provide everyone with a free and open 360’ virtual world, which
-              can be rebuilt and shaped with the help of your collaboration. The
-              overlord will build their virtual empire, and the pioneers will
-              join them to bring the Second Earth to life. Our revolutionary
-              mission system will ensure that every contribution is rewarded
-              with the Second Earth Token (SET). Only those who contribute can
-              mine tokens through the Proof of Mission (PoM) system.
-              <br />
-              <br /> We are just a group of passionate people all over the
-              world. If you are too, please join our journey! Our goal is
-              continuous improvement, and every thought and suggestion can help
-              us provide a better experience for everyone.
-              <div style={{ textAlign: "center" }}>
-                Therefore, if you have any questions, please contact us!
+            <Carousel
+              enableAutoPlay={true}
+              autoPlaySpeed={3000}
+              breakPoints={breakPoints}
+              showArrows={false}
+            >
+              <div style={{ padding: "5px", flexGrow: 1 }}>
+                <img
+                  style={{
+                    width: "200px",
+                    height: "200px",
+                    backgroundSize: "cover",
+                  }}
+                  src={"/ppl1.png"}
+                  alt=''
+                />
+                <h3>Scott Bingly</h3>
+                <h4>HEad of Global Operations</h4>
+                <p style={{ textAlign: "left" }}>
+                  Scott is a results-driven Head of Global Operations with over
+                  10 years’ experience leading and increasing growth in small
+                  and medium international businesses mainly in the Asia-Pacific
+                  Region. Being a NUS MBA recipient and experienced manager, he
+                  oversaw unparalleled increase in company revenue (250% over 3
+                  years) during his time as a General Manager. Currently Scott
+                  is seeking to build and grow together with Second Earth a
+                  major VR- and blockchain-based entertainment ecosystem to
+                  rival today’s major internet companies.
+                </p>
               </div>
-            </p>
+              <div style={{ padding: "5px", flexGrow: 1 }}>
+                <img
+                  style={{
+                    width: "200px",
+                    height: "200px",
+                    backgroundSize: "cover",
+                  }}
+                  src={"/ppl2.png"}
+                  alt=''
+                />
+                <h3>Scott Bingly</h3>
+                <h4>Head of Marketing</h4>
+                <p style={{ textAlign: "left" }}>
+                  Scott is a results-driven Head of Global Operations with over
+                  10 years’ experience leading and increasing growth in small
+                  and medium international businesses mainly in the Asia-Pacific
+                  Region. Being a NUS MBA recipient and experienced manager, he
+                  oversaw unparalleled increase in company revenue (250% over 3
+                  years) during his time as a General Manager. Currently Scott
+                  is seeking to build and grow together with Second Earth a
+                  major VR- and blockchain-based entertainment ecosystem to
+                  rival today’s major internet companies.
+                </p>
+              </div>
+              <div style={{ padding: "5px", flexGrow: 1 }}>
+                <img
+                  style={{
+                    width: "200px",
+                    height: "200px",
+                    backgroundSize: "cover",
+                  }}
+                  src={"/ppl3.png"}
+                  alt=''
+                />
+                <h3>Scott Bingly</h3>
+                <h4>Creative Director </h4>
+                <p style={{ textAlign: "left" }}>
+                  Scott is a results-driven Head of Global Operations with over
+                  10 years’ experience leading and increasing growth in small
+                  and medium international businesses mainly in the Asia-Pacific
+                  Region. Being a NUS MBA recipient and experienced manager, he
+                  oversaw unparalleled increase in company revenue (250% over 3
+                  years) during his time as a General Manager. Currently Scott
+                  is seeking to build and grow together with Second Earth a
+                  major VR- and blockchain-based entertainment ecosystem to
+                  rival today’s major internet companies.
+                </p>
+              </div>
+              <div style={{ padding: "5px", flexGrow: 1 }}>
+                <img
+                  style={{
+                    width: "200px",
+                    height: "200px",
+                    backgroundSize: "cover",
+                  }}
+                  src={"/ppl4.png"}
+                  alt=''
+                />
+                <h3>Scott Bingly</h3>
+                <h4>Technical Project Lead </h4>
+                <p style={{ textAlign: "left" }}>
+                  Scott is a results-driven Head of Global Operations with over
+                  10 years’ experience leading and increasing growth in small
+                  and medium international businesses mainly in the Asia-Pacific
+                  Region. Being a NUS MBA recipient and experienced manager, he
+                  oversaw unparalleled increase in company revenue (250% over 3
+                  years) during his time as a General Manager. Currently Scott
+                  is seeking to build and grow together with Second Earth a
+                  major VR- and blockchain-based entertainment ecosystem to
+                  rival today’s major internet companies.
+                </p>
+              </div>
+            </Carousel>
 
-            <div style={{ textAlign: "center",display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center" }}>
+            <div style={{ paddingTop: "10%", width: isDesktopSize?"45%":"100%" }}>
+              <h1 style={{ textAlign: "center", fontSize: "1.75rem" }}>
+                We are the citizen of the Second Earth
+              </h1>
+              <p style={{ paddingBottom: "150px" }}>
+                We are the most powerful innovative virtual reality community in
+                the world, free and open to everyone. We firmly believe that
+                people want to shape and explore their own world. Therefore, we
+                provide everyone with a free and open 360’ virtual world, which
+                can be rebuilt and shaped with the help of your collaboration.
+                The overlord will build their virtual empire, and the pioneers
+                will join them to bring the Second Earth to life. Our
+                revolutionary mission system will ensure that every contribution
+                is rewarded with the Second Earth Token (SET). Only those who
+                contribute can mine tokens through the Proof of Mission (PoM)
+                system.
+                <br />
+                <br /> We are just a group of passionate people all over the
+                world. If you are too, please join our journey! Our goal is
+                continuous improvement, and every thought and suggestion can
+                help us provide a better experience for everyone.
+                <div style={{ textAlign: "center" }}>
+                  Therefore, if you have any questions, please contact us!
+                </div>
+              </p>
+            </div>
+
+            <div
+              style={{
+                textAlign: "center",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                position: "relative",
+              }}
+            >
               <p style={{ fontSize: "1.75rem" }}>CONTACT US</p>
-              <div style={{backgroundColor:"#8C02A0",width:"25%",padding:"12px 24px 12px 24px",borderRadius:"10px",display:"flex",justifyContent:"center",alignItems:"center"}}>cc@setcoin.io</div>
+              <div
+                style={{
+                  position: "sticky",
+                  zIndex: 1,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <div
+                  style={{
+                    width: "100%",
+                    backgroundColor: "#8C02A0",
+                    padding: "14px 28px 14px 28px",
+                    borderRadius: "10px",
+                    fontSize: "1.25rem",
+                    marginBottom:isDesktopSize?"":"5rem"
+                  }}
+                >
+                  cc@setcoin.io
+                </div>
+              </div>
             </div>
           </div>
         </section>
-      <section style={{zIndex:3,height:"5%",backgroundColor:"#1C1C1C",display:"flex",justifyContent:"center",alignItems:"center",color:"#929292"}}>
-        2020 SETCOIN ALL rights reserved
-      </section>
+        <section
+          style={{
+            zIndex: 3,
+            height:isDesktopSize? "5%":"10%",
+            backgroundColor: "#1C1C1C",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            color: "#929292",
+
+          }}
+        >
+          2020 SETCOIN ALL rights reserved
+        </section>
       </div>
       {/* 메인끝 */}
     </div>
