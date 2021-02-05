@@ -1,10 +1,13 @@
+@import './home';
+
 html,
 body {
   padding: 0;
   margin: 0;
   /* font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif; */
-  font-family: "neo-latina";
+  // font-family:"Ubuntu";
+  font-weight: 900;
 }
 
 a {
@@ -14,7 +17,4 @@ a {
 
 * {
   box-sizing: border-box;
-}
-.hoverEffect:hover {
-  border: 1px solid greenyellow;
 }
