@@ -39,7 +39,6 @@ export default function Home() {
   }
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
-  console.log(scrollPosition)
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll, { passive: true })
@@ -234,7 +233,7 @@ export default function Home() {
   ]
 
   return (
-    <div>
+    <div >
       <div
         style={{
           position: "fixed",
@@ -298,7 +297,7 @@ export default function Home() {
       >
         <div id='trp-floater-ls-current-language' className='trp-with-flags'>
           <a
-            href='#'
+            // href='#'
             className='trp-floater-ls-disabled-language trp-ls-disabled-language'
           >
             <img
@@ -477,7 +476,7 @@ export default function Home() {
       {/* 첫번째페이지 */}
       <div
         style={{
-          height: "100vh",
+          minHeight: isDesktopSize?"100vh":"-webkit-fill-available",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -743,7 +742,7 @@ export default function Home() {
         <div
           style={{
             position: "relative",
-            height: "500px",
+            minHeight: "500px",
             backgroundImage:
               "linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ),url(image2.jpg)",
             backgroundRepeat: "no-repeat",
@@ -776,7 +775,7 @@ export default function Home() {
           <>
             <div
               id='WHITEPAPER'
-              style={{ backgroundColor: "#232A37", height: "60%" }}
+              style={{ backgroundColor: "#232A37", minHeight: "45%" }}
             >
               <div style={{ textAlign: "center", paddingTop: "40px" }}>
                 <p style={{ fontSize: "1.5rem" }}>
