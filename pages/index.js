@@ -498,7 +498,7 @@ export default function Home() {
           loop='loop'
           muted={true}
         >
-          <source src='video.webm' type='video/webm' />
+          <source src={'https://videoforportfolio.s3.ap-northeast-2.amazonaws.com/video.webm'} type='video/webm' />
         </video>
         <div
           style={{
@@ -748,7 +748,7 @@ export default function Home() {
             backgroundRepeat: "no-repeat",
             backgroundAttachment: "fixed",
             backgroundSize: "cover",
-            backgroundPositionX: isDesktopOrLaptop ? "" : "70%",
+            backgroundPositionX: "70%",
           }}
         >
           <div
@@ -1961,7 +1961,7 @@ export default function Home() {
                             height: "200px",
                             backgroundSize: "cover",
                           }}
-                          src={"/ppl1.png"}
+                          src={"cat1.jpeg"}
                           alt=''
                         />
                         <h3>Scott Bingly</h3>
@@ -1987,7 +1987,7 @@ export default function Home() {
                             height: "200px",
                             backgroundSize: "cover",
                           }}
-                          src={"/ppl2.png"}
+                          src={"cat2.jpeg"}
                           alt=''
                         />
                         <h3>Scott Bingly</h3>
@@ -2013,7 +2013,7 @@ export default function Home() {
                             height: "200px",
                             backgroundSize: "cover",
                           }}
-                          src={"/ppl3.png"}
+                          src={"dog1.jpeg"}
                           alt=''
                         />
                         <h3>Scott Bingly</h3>
@@ -2039,7 +2039,7 @@ export default function Home() {
                             height: "200px",
                             backgroundSize: "cover",
                           }}
-                          src={"/ppl4.png"}
+                          src={"bird1.jpeg"}
                           alt=''
                         />
                         <h3>Scott Bingly</h3>
@@ -2104,9 +2104,9 @@ export default function Home() {
               world. If you are too, please join our journey! Our goal is
               continuous improvement, and every thought and suggestion can help
               us provide a better experience for everyone.
-              <p style={{ textAlign: "center" }}>
+              <span style={{ textAlign: "center",display:"block" }}>
                 Therefore, if you have any questions, please contact us!
-              </p>
+              </span>
             </p>
           </div>
 
